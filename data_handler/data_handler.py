@@ -219,9 +219,8 @@ class DataComporator:
         lte = pd.concat([self.db_data['LTE']['Cell Name'], self.excel_data['LTE']['Cell Name'],
                          self.db_data['LTE']['Cell Name']]).drop_duplicates(keep=False)
 
-        print(gsm)
+        self._save_missing_report(lte, umts, gsm)
 
-        #Здесь нужно будет сохранять данные
 
     def _compare_data(self):
         lte = self.excel_data['LTE'].merge(self.db_data['LTE'], on=['Cell Name', 'Site Name'], how="inner")
@@ -242,6 +241,12 @@ class DataComporator:
 
     def _save_report(self, lte, umts, gsm):
         with pd.ExcelWriter(settings.report_file_path) as writer:
+            lte.to_excel(writer, sheet_name='LTE', index=False)
+            umts.to_excel(writer, sheet_name='UMTS', index=False)
+            gsm.to_excel(writer, sheet_name='GSM', index=False)
+
+    def _save_missing_report(self, lte, umts, gsm):
+        with pd.ExcelWriter(settings.missing_report_file_path) as writer:
             lte.to_excel(writer, sheet_name='LTE', index=False)
             umts.to_excel(writer, sheet_name='UMTS', index=False)
             gsm.to_excel(writer, sheet_name='GSM', index=False)
